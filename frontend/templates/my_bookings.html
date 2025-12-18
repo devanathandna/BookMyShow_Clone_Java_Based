@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %}My Bookings - BookMyShow{% endblock %}
+
+{% block content %}
+<style>
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #888;
+    }
+
+    .bookings-list {
+        display: grid;
+        gap: 20px;
+    }
+
+    .booking-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 25px;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .booking-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        border-color: #e94560;
+    }
+
+    .booking-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #e94560, #16213e);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+    }
+
+    .booking-details h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .booking-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .booking-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #888;
+        font-size: 14px;
+    }
+
+    .booking-seats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .booking-seats .seat {
+        background: #e94560;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .booking-price {
+        text-align: right;
+    }
+
+    .booking-price .total {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2ecc71;
+        margin-bottom: 5px;
+    }
+
+    .booking-price .status {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status.confirmed {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+    }
+
+    .status.pending {
+        background: rgba(241, 196, 15, 0.2);
+        color: #f1c40f;
+    }
+
+    .status.cancelled {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+
+    .no-bookings {
+        text-align: center;
+        padding: 60px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .no-bookings-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .no-bookings h3 {
+        margin-bottom: 10px;
+    }
+
+    .no-bookings p {
+        color: #888;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .booking-card {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .booking-icon {
+            margin: 0 auto;
+        }
+
+        .booking-meta {
+            justify-content: center;
+        }
+
+        .booking-seats {
+            justify-content: center;
+        }
+
+        .booking-price {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="page-header">
+    <h1>🎟️ My Bookings</h1>
+    <p>Your movie ticket booking history</p>
+</div>
+
+{% if bookings and bookings|length > 0 %}
+<div class="bookings-list">
+    {% for booking in bookings %}
+    <div class="booking-card">
+        <div class="booking-icon">🎬</div>
+        
+        <div class="booking-details">
+            <h3>{{ booking.movieName }}</h3>
+            <div class="booking-meta">
+                <span>📍 {{ booking.theatreName }}</span>
+                <span>🕐 {{ booking.showtime }}</span>
+                <span>📅 Booked: {{ booking.bookingDate }}</span>
+            </div>
+            <div class="booking-seats">
+                {% for seat in booking.seats %}
+                <span class="seat">Seat {{ seat }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="booking-price">
+            <div class="total">₹{{ booking.total }}</div>
+            <span class="status confirmed">✓ Confirmed</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-bookings">
+    <div class="no-bookings-icon">🎫</div>
+    <h3>No Bookings Yet</h3>
+    <p>You haven't made any bookings. Explore movies and book your first ticket!</p>
+    <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary">Browse Shows</a>
+</div>
+{% endif %}
+
+<div class="mt-30">
+    <a href="{{ url_for('user_dashboard') }}" class="link">← Back to Dashboard</a>
+</div>
+{% endblock %}

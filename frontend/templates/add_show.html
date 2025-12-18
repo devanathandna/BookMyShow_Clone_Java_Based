@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Show - BookMyShow Admin{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-header .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .form-header h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .form-header p {
+        color: #888;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    select {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #e94560;
+        box-shadow: 0 0 15px rgba(233, 69, 96, 0.3);
+    }
+
+    select option {
+        background: #1a1a2e;
+        color: #fff;
+    }
+
+    .warning-box {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid #ffc107;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        color: #ffc107;
+        text-align: center;
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <div class="icon">🎞️</div>
+        <h1>Add New Show</h1>
+        <p>Schedule a movie show in a theatre</p>
+    </div>
+
+    <div class="card">
+        {% if not movies or not theatres %}
+        <div class="warning-box">
+            ⚠️ You need to add at least one movie and one theatre before creating a show.
+            <br><br>
+            <a href="{{ url_for('add_movie') }}" class="link">Add Movie</a> | 
+            <a href="{{ url_for('add_theatre') }}" class="link">Add Theatre</a>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('add_show') }}">
+            <div class="form-group">
+                <label for="movieId">Select Movie</label>
+                <select id="movieId" name="movieId" required>
+                    <option value="">-- Select a Movie --</option>
+                    {% for movie in movies %}
+                    <option value="{{ movie.id }}">{{ movie.name }} ({{ movie.language }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="theatreId">Select Theatre</label>
+                <select id="theatreId" name="theatreId" required>
+                    <option value="">-- Select a Theatre --</option>
+                    {% for theatre in theatres %}
+                    <option value="{{ theatre.id }}">{{ theatre.name }} - {{ theatre.location }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="showtime">Show Time</label>
+                    <input type="datetime-local" id="showtime" name="showtime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Ticket Price (₹)</label>
+                    <input type="number" id="price" name="price" placeholder="e.g., 200" min="1" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" {% if not movies or not theatres %}disabled{% endif %}>Add Show</button>
+        </form>
+
+        <p class="text-center mt-20">
+            <a href="{{ url_for('admin_dashboard') }}" class="link">← Back to Dashboard</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

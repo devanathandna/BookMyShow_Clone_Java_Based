@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard - BookMyShow{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-header p {
+        color: #888;
+    }
+
+    .welcome-card {
+        background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(194, 58, 81, 0.1));
+        border: 1px solid rgba(233, 69, 96, 0.3);
+        border-radius: 20px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .welcome-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .welcome-card .avatar {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #e94560, #c23a51);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+    }
+
+    .welcome-right a {
+        margin-left: 10px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Shows Grid */
+    .shows-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .show-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .show-card:hover {
+        transform: translateY(-5px);
+        border-color: #e94560;
+        box-shadow: 0 10px 40px rgba(233, 69, 96, 0.2);
+    }
+
+    .show-card .movie-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #fff;
+    }
+
+    .show-card .show-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .show-card .show-info span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #888;
+        font-size: 14px;
+    }
+
+    .show-card .show-price {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .show-card .price {
+        font-size: 22px;
+        font-weight: 700;
+        color: #2ecc71;
+    }
+
+    .show-card .price small {
+        font-size: 12px;
+        color: #888;
+        font-weight: 400;
+    }
+
+    .btn-book {
+        background: linear-gradient(135deg, #e94560, #c23a51);
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-book:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+    }
+
+    .no-shows {
+        text-align: center;
+        padding: 60px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .no-shows-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .no-shows h3 {
+        margin-bottom: 10px;
+    }
+
+    .no-shows p {
+        color: #888;
+    }
+
+    @media (max-width: 600px) {
+        .welcome-card {
+            flex-direction: column;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .welcome-left {
+            flex-direction: column;
+        }
+
+        .welcome-right {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .welcome-right a {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<div class="dashboard-header">
+    <h1>🎬 BookMyShow</h1>
+    <p>Find and book your favorite movies</p>
+</div>
+
+<div class="welcome-card">
+    <div class="welcome-left">
+        <div class="avatar">👤</div>
+        <div>
+            <h2>Hello, {{ user_name }}! 👋</h2>
+            <p style="color: #888; margin-top: 5px;">Ready to book some movie tickets?</p>
+        </div>
+    </div>
+    <div class="welcome-right">
+        <a href="{{ url_for('my_bookings') }}" class="btn btn-secondary">🎟️ My Bookings</a>
+        <a href="{{ url_for('user_logout') }}" class="btn btn-outline">Logout</a>
+    </div>
+</div>
+
+<h2 class="section-title">🎭 Available Shows</h2>
+
+{% if shows and shows|length > 0 %}
+<div class="shows-grid">
+    {% for show in shows %}
+    <div class="show-card">
+        <div class="movie-title">🎬 {{ show.movieName }}</div>
+        <div class="show-info">
+            <span>🏛️ {{ show.theatreName }}</span>
+            <span>📍 {{ show.theatreLocation }}</span>
+            <span>🕐 {{ show.showtime }}</span>
+            <span>💺 {{ show.totalSeats }} Seats Available</span>
+        </div>
+        <div class="show-price">
+            <div class="price">₹{{ show.price }} <small>/ ticket</small></div>
+            <a href="{{ url_for('book_show', show_id=show.id) }}" class="btn-book">Book Now →</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-shows">
+    <div class="no-shows-icon">🎬</div>
+    <h3>No Shows Available</h3>
+    <p>There are no shows scheduled at the moment. Please check back later!</p>
+</div>
+{% endif %}
+{% endblock %}

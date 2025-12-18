@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}BookMyShow - Home{% endblock %}
+
+{% block content %}
+<style>
+    .hero {
+        text-align: center;
+        padding: 80px 0;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #fff, #e94560);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+        font-size: 20px;
+        color: #aaa;
+        margin-bottom: 40px;
+    }
+
+    .login-options {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 50px 40px;
+        text-align: center;
+        width: 300px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .login-card:hover {
+        transform: translateY(-10px);
+        border-color: #e94560;
+        box-shadow: 0 20px 40px rgba(233, 69, 96, 0.2);
+    }
+
+    .login-card .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .login-card h2 {
+        margin-bottom: 15px;
+        color: #fff;
+    }
+
+    .login-card p {
+        color: #888;
+        margin-bottom: 30px;
+        font-size: 14px;
+    }
+
+    .login-card .btn {
+        width: 100%;
+    }
+</style>
+
+<div class="hero">
+    <h1>Welcome to BookMyShow</h1>
+    <p>Your one-stop destination for booking movie tickets</p>
+
+    <div class="login-options">
+        <div class="login-card">
+            <div class="icon">👤</div>
+            <h2>User Login</h2>
+            <p>Browse movies, book tickets, and enjoy the show!</p>
+            <a href="{{ url_for('user_login') }}" class="btn btn-primary">Login as User</a>
+            <p class="mt-20">New user? <a href="{{ url_for('user_register') }}" class="link">Register here</a></p>
+        </div>
+
+        <div class="login-card">
+            <div class="icon">🔐</div>
+            <h2>Admin Login</h2>
+            <p>Manage theatres, shows, and bookings</p>
+            <a href="{{ url_for('admin_login') }}" class="btn btn-primary">Login as Admin</a>
+            <p class="mt-20">New admin? <a href="{{ url_for('admin_register') }}" class="link">Register here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

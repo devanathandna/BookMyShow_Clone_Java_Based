@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}User Registration - BookMyShow{% endblock %}
+
+{% block content %}
+<style>
+    .register-container {
+        max-width: 450px;
+        margin: 50px auto;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .register-header .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .register-header h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .register-header p {
+        color: #888;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 30px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .divider span {
+        padding: 0 20px;
+        color: #666;
+        font-size: 14px;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-header">
+        <div class="icon">📝</div>
+        <h1>User Registration</h1>
+        <p>Create a new account to book movie tickets</p>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="{{ url_for('user_register') }}">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" required minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required minlength="6">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <p class="text-center">
+            Already have an account? <a href="{{ url_for('user_login') }}" class="link">Login here</a>
+        </p>
+
+        <p class="text-center mt-20">
+            <a href="{{ url_for('home') }}" class="link">← Back to Home</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

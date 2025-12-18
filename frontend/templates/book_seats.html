@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Seats - {{ movie.name }} - BookMyShow{% endblock %}
+
+{% block content %}
+<style>
+    .booking-container {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+        .booking-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .movie-header {
+        margin-bottom: 30px;
+    }
+
+    .movie-header h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .movie-info {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        color: #888;
+    }
+
+    .movie-info span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Screen */
+    .screen-container {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .screen {
+        background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.1) 100%);
+        height: 8px;
+        width: 80%;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        box-shadow: 0 5px 30px rgba(255, 255, 255, 0.3);
+    }
+
+    .screen-label {
+        color: #888;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    /* Seats Grid */
+    .seats-container {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .seats-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 10px;
+        justify-items: center;
+        margin-bottom: 30px;
+    }
+
+    .seat {
+        width: 35px;
+        height: 35px;
+        border-radius: 8px 8px 3px 3px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .seat.available {
+        background: #4a4a5a;
+        border: 2px solid #5a5a6a;
+        color: #888;
+    }
+
+    .seat.available:hover {
+        background: #5a5a6a;
+        transform: scale(1.1);
+    }
+
+    .seat.selected {
+        background: #2ecc71;
+        border: 2px solid #27ae60;
+        color: #fff;
+        transform: scale(1.05);
+    }
+
+    .seat.booked {
+        background: #e74c3c;
+        border: 2px solid #c0392b;
+        color: #fff;
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    /* Legend */
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #888;
+    }
+
+    .legend-box {
+        width: 25px;
+        height: 25px;
+        border-radius: 5px;
+    }
+
+    .legend-box.available {
+        background: #4a4a5a;
+        border: 2px solid #5a5a6a;
+    }
+
+    .legend-box.selected {
+        background: #2ecc71;
+        border: 2px solid #27ae60;
+    }
+
+    .legend-box.booked {
+        background: #e74c3c;
+        border: 2px solid #c0392b;
+    }
+
+    /* Side Panel */
+    .booking-panel {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: sticky;
+        top: 100px;
+    }
+
+    .panel-header {
+        text-align: center;
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .panel-header h2 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    .panel-header p {
+        color: #888;
+        font-size: 14px;
+    }
+
+    .selected-seats {
+        margin-bottom: 20px;
+    }
+
+    .selected-seats h3 {
+        font-size: 14px;
+        color: #888;
+        margin-bottom: 10px;
+    }
+
+    .seats-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 40px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .seat-tag {
+        background: #2ecc71;
+        color: #fff;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .no-seats {
+        color: #666;
+        font-size: 13px;
+    }
+
+    /* Calculation */
+    .calculation {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .calc-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .calc-row.total {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 10px;
+        margin-top: 10px;
+        margin-bottom: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .calc-row .label {
+        color: #888;
+    }
+
+    .calc-row .value {
+        color: #fff;
+    }
+
+    .calc-row.total .value {
+        color: #2ecc71;
+    }
+
+    /* Pay Button */
+    .pay-btn {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .pay-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
+    }
+
+    .pay-btn:disabled {
+        background: #555;
+        cursor: not-allowed;
+    }
+
+    /* Success Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: #1a1a2e;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        max-width: 400px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .modal h2 {
+        margin-bottom: 10px;
+    }
+
+    .modal p {
+        color: #888;
+        margin-bottom: 25px;
+    }
+
+    .row-label {
+        grid-column: 1 / -1;
+        text-align: left;
+        color: #e94560;
+        font-weight: 600;
+        font-size: 12px;
+        margin-top: 10px;
+        margin-bottom: -5px;
+    }
+</style>
+
+<div class="movie-header">
+    <h1>🎬 {{ movie.name }}</h1>
+    <div class="movie-info">
+        <span>📍 {{ theatre.name }} - {{ theatre.location }}</span>
+        <span>🕐 {{ show.showtime }}</span>
+        <span>💰 ₹{{ show.price }} per ticket</span>
+    </div>
+</div>
+
+<div class="booking-container">
+    <!-- Seats Section -->
+    <div class="seats-container">
+        <div class="screen-container">
+            <div class="screen"></div>
+            <div class="screen-label">Screen This Way</div>
+        </div>
+
+        <div class="seats-grid" id="seatsGrid">
+            <!-- Seats will be generated by JavaScript -->
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box available"></div>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box selected"></div>
+                <span>Selected</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box booked"></div>
+                <span>Booked</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Panel -->
+    <div class="booking-panel">
+        <div class="panel-header">
+            <h2>🎟️ Booking Summary</h2>
+            <p>Select seats to continue</p>
+        </div>
+
+        <div class="selected-seats">
+            <h3>Selected Seats</h3>
+            <div class="seats-display" id="selectedSeatsDisplay">
+                <span class="no-seats">No seats selected</span>
+            </div>
+        </div>
+
+        <div class="calculation">
+            <div class="calc-row">
+                <span class="label">Seats Selected</span>
+                <span class="value" id="seatCount">0</span>
+            </div>
+            <div class="calc-row">
+                <span class="label">Price per Ticket</span>
+                <span class="value">₹{{ show.price }}</span>
+            </div>
+            <div class="calc-row">
+                <span class="label">Subtotal</span>
+                <span class="value" id="subtotal">₹0</span>
+            </div>
+            <div class="calc-row">
+                <span class="label">Tax ({{ seat_info.tax }}%)</span>
+                <span class="value" id="taxAmount">₹0</span>
+            </div>
+            <div class="calc-row total">
+                <span class="label">Total Amount</span>
+                <span class="value" id="totalAmount">₹0</span>
+            </div>
+        </div>
+
+        <button class="pay-btn" id="payBtn" disabled onclick="confirmBooking()">
+            💳 Pay Now
+        </button>
+
+        <p class="text-center mt-20">
+            <a href="{{ url_for('user_dashboard') }}" class="link">← Back to Shows</a>
+        </p>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal" id="successModal">
+    <div class="modal-content">
+        <div class="modal-icon">🎉</div>
+        <h2>Booking Confirmed!</h2>
+        <p id="modalMessage">Your seats have been booked successfully.</p>
+        <a href="{{ url_for('my_bookings') }}" class="btn btn-primary">View My Bookings</a>
+    </div>
+</div>
+
+<script>
+    const showId = "{{ show.id }}";
+    const totalSeats = {{ seat_info.totalSeats }};
+    const bookedSeats = new Set({{ seat_info.bookedSeats }});
+    const pricePerSeat = {{ show.price }};
+    const taxRate = {{ seat_info.tax }};
+    
+    let selectedSeats = new Set();
+
+    // Generate seats
+    function generateSeats() {
+        const grid = document.getElementById('seatsGrid');
+        const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        const seatsPerRow = 10;
+        let seatNum = 1;
+
+        for (let r = 0; r < Math.ceil(totalSeats / seatsPerRow); r++) {
+            // Add row label
+            const rowLabel = document.createElement('div');
+            rowLabel.className = 'row-label';
+            rowLabel.textContent = rows[r] || 'Row ' + (r + 1);
+            grid.appendChild(rowLabel);
+
+            // Add seats for this row
+            for (let s = 0; s < seatsPerRow && seatNum <= totalSeats; s++) {
+                const seat = document.createElement('div');
+                const currentSeatNum = seatNum; // Capture current value
+                seat.className = 'seat';
+                seat.dataset.seat = currentSeatNum;
+                seat.textContent = currentSeatNum;
+
+                if (bookedSeats.has(currentSeatNum)) {
+                    seat.classList.add('booked');
+                    seat.title = 'Already Booked';
+                } else {
+                    seat.classList.add('available');
+                    seat.onclick = function() { toggleSeat(currentSeatNum, this); };
+                }
+
+                grid.appendChild(seat);
+                seatNum++;
+            }
+        }
+    }
+
+    function toggleSeat(seatNum, element) {
+        if (selectedSeats.has(seatNum)) {
+            selectedSeats.delete(seatNum);
+            element.classList.remove('selected');
+            element.classList.add('available');
+        } else {
+            selectedSeats.add(seatNum);
+            element.classList.remove('available');
+            element.classList.add('selected');
+        }
+        updateSummary();
+    }
+
+    function updateSummary() {
+        const count = selectedSeats.size;
+        const subtotal = count * pricePerSeat;
+        const tax = subtotal * taxRate / 100;
+        const total = subtotal + tax;
+
+        document.getElementById('seatCount').textContent = count;
+        document.getElementById('subtotal').textContent = '₹' + subtotal.toFixed(2);
+        document.getElementById('taxAmount').textContent = '₹' + tax.toFixed(2);
+        document.getElementById('totalAmount').textContent = '₹' + total.toFixed(2);
+
+        // Update selected seats display
+        const display = document.getElementById('selectedSeatsDisplay');
+        if (count === 0) {
+            display.innerHTML = '<span class="no-seats">No seats selected</span>';
+        } else {
+            const sortedSeats = Array.from(selectedSeats).sort((a, b) => a - b);
+            display.innerHTML = sortedSeats.map(s => `<span class="seat-tag">${s}</span>`).join('');
+        }
+
+        // Enable/disable pay button
+        document.getElementById('payBtn').disabled = count === 0;
+    }
+
+    async function confirmBooking() {
+        if (selectedSeats.size === 0) return;
+
+        const btn = document.getElementById('payBtn');
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+
+        try {
+            const response = await fetch('/confirm-booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    showId: showId,
+                    seats: Array.from(selectedSeats)
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const booking = result.booking || {};
+                document.getElementById('modalMessage').textContent = 
+                    `${booking.seats || selectedSeats.size} seats booked! Total: ₹${(booking.total || 0).toFixed(2)}`;
+                document.getElementById('successModal').classList.add('show');
+            } else {
+                alert(result.message || 'Booking failed. Please try again.');
+                btn.disabled = false;
+                btn.textContent = '💳 Pay Now';
+            }
+        } catch (error) {
+            alert('Error processing booking. Please try again.');
+            btn.disabled = false;
+            btn.textContent = '💳 Pay Now';
+        }
+    }
+
+    // Initialize
+    generateSeats();
+</script>
+{% endblock %}

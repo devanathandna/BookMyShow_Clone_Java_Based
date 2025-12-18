@@ -1,0 +1,123 @@
+BookMyShow – System Design Overview
+
+This project is a full-stack movie ticket booking application designed to resemble a real-world BookMyShow-like platform. It uses a Java-based REST API for the backend, MongoDB for data storage, and a Flask-based web frontend. The main goal of this project is to demonstrate clean architecture, proper separation of concerns, and scalable backend design rather than UI complexity.
+
+The system follows a three-tier client-server architecture.
+
+At the top is the presentation layer, which is the Flask frontend. It handles user pages, admin pages, and booking screens. The frontend communicates with the backend only through HTTP requests and does not directly interact with the database.
+
+The middle layer is the API and business logic layer implemented in Java using the built-in HttpServer. This layer exposes REST endpoints for users, admins, movies, theatres, shows, bookings, and statistics. Each endpoint is handled by a dedicated handler class, keeping responsibilities clearly separated.
+
+The bottom layer is the data access layer powered by MongoDB. Data is stored in collections such as users, admins, movies, theatres, shows, and bookings. MongoDB is used because it naturally fits document-based data like shows with seat arrays and booking records.
+
+Architecture Summary
+
+Frontend: Flask with Jinja2 templates
+Backend: Java REST API using HttpServer
+Database: MongoDB Atlas
+Communication: JSON over HTTP
+
+Design Patterns Used
+
+The Handler (Command) Pattern is used where each API endpoint has its own handler class. For example, user registration, login, movie management, show scheduling, and booking all have separate handlers. This makes the system easy to maintain and extend.
+
+The RESTful API pattern is followed throughout the backend. The system uses standard HTTP methods such as GET and POST, stateless requests, and JSON-based communication. This allows the frontend and backend to remain fully decoupled.
+
+A repository-like approach is used by organizing MongoDB collections logically. Each handler interacts with the required collection, keeping data operations structured and predictable.
+
+Data Transfer Objects are used in the form of Java model classes like User, Admin, Movie, Theatre, Show, Booking, and Payment. These classes represent real-world entities and help pass data cleanly between layers.
+
+Static factory methods are used instead of complex constructors. For example, user and admin registration and login are handled through clear, descriptive static methods. This improves readability and keeps object creation logic centralized.
+
+A singleton-style database initialization is used so that MongoDB connections and collections are created once at server startup and reused across handlers.
+
+SOLID Principles in Practice
+
+Each class has a single responsibility. The server sets up routes, handlers process requests, models represent data, and MongoDB handles persistence.
+
+The system is open for extension. New endpoints or features can be added by creating new handlers without changing existing ones.
+
+High-level components depend on abstractions like MongoDB collections and API contracts rather than direct implementations.
+
+Core Business Logic
+
+Users can register, log in, browse movies, view available shows, select seats, and book tickets. Each booking checks seat availability and records the booking in the database.
+
+Admins can add theatres, configure shows, and manage movies. Each theatre can have its own seating capacity and pricing configuration.
+
+Bookings are handled as single transactions. Multiple seats can be booked at once, and booking history is stored and retrievable for users.
+
+System Flow Examples
+
+User registration flow:
+Frontend sends registration data to the backend.
+Backend validates input and stores user data in MongoDB.
+A success or failure response is returned to the frontend.
+
+Booking flow:
+User selects a movie and show.
+Frontend fetches available seats.
+User selects seats and submits booking.
+Backend validates availability, updates the show, creates a booking entry, and returns confirmation.
+
+Data flow:
+Flask frontend sends HTTP requests.
+Java handlers process the request.
+MongoDB stores or retrieves data.
+JSON response is sent back and rendered in the UI.
+
+Key Quality Attributes
+
+The system is scalable because the backend is stateless and can be horizontally scaled.
+
+Data persistence is reliable due to MongoDB cloud storage.
+
+The codebase is easy to maintain because each feature is isolated in its own handler.
+
+The design is extensible, allowing new features to be added without restructuring existing code.
+
+Technical Stack Summary
+
+Backend language: Java (JDK 11 or higher)
+HTTP server: Java HttpServer
+Build tool: Maven
+Database: MongoDB Atlas
+Frontend: Flask with Jinja2
+Communication format: JSON
+
+Available API Endpoints
+
+User and admin registration and login
+Movie listing and creation
+Theatre creation and viewing
+Show scheduling
+Seat availability checking
+Seat booking
+Booking history
+Dashboard statistics
+
+Completed Features
+
+User and admin authentication
+Movie and theatre management
+Show scheduling
+Seat availability tracking
+Multi-seat booking
+Booking history
+Tax and price calculation
+Statistics API
+Frontend-backend integration
+
+Design Choices Explained
+
+MongoDB was chosen for its flexibility with document-based data and ease of cloud deployment.
+
+Java HttpServer was used to keep the backend lightweight and focused on core backend concepts without heavy frameworks.
+
+The handler-based approach keeps each endpoint independent and easy to manage.
+
+Flask was used for the frontend to allow quick development and clear separation from backend logic.
+
+Conclusion
+
+This project demonstrates a clean, real-world backend architecture suitable for a ticket booking system. It focuses on clarity, modularity, and scalability while keeping the implementation simple and understandable. The system can be easily extended to include additional features like payments, notifications, or analytics in the future.

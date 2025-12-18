@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Theatre - BookMyShow Admin{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-header .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .form-header h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .form-header p {
+        color: #888;
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <div class="icon">🏛️</div>
+        <h1>Add New Theatre</h1>
+        <p>Add a new theatre to the platform</p>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="{{ url_for('add_theatre') }}">
+            <div class="form-group">
+                <label for="name">Theatre Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter theatre name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="Enter location/address" required>
+            </div>
+
+            <div class="form-group">
+                <label for="totalseats">Total Seats</label>
+                <input type="number" id="totalseats" name="totalseats" placeholder="Enter total seats" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tax">Tax Rate (%)</label>
+                <input type="number" id="tax" name="tax" placeholder="Enter tax percentage (e.g., 10)" min="0" max="100" value="10" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Theatre</button>
+        </form>
+
+        <p class="text-center mt-20">
+            <a href="{{ url_for('admin_dashboard') }}" class="link">← Back to Dashboard</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

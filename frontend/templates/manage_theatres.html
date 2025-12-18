@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Theatres - BookMyShow Admin{% endblock %}
+
+{% block content %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+    }
+
+    .table-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 15px 20px;
+        text-align: left;
+    }
+
+    th {
+        background: rgba(233, 69, 96, 0.2);
+        color: #e94560;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    tr:not(:last-child) td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+
+    .empty-state .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="page-header">
+    <h1>🏛️ Manage Theatres</h1>
+    <a href="{{ url_for('add_theatre') }}" class="btn btn-primary">+ Add Theatre</a>
+</div>
+
+<div class="table-container">
+    {% if theatres %}
+    <table>
+        <thead>
+            <tr>
+                <th>Theatre Name</th>
+                <th>Location</th>
+                <th>Total Seats</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for theatre in theatres %}
+            <tr>
+                <td>{{ theatre.name }}</td>
+                <td>{{ theatre.location }}</td>
+                <td>{{ theatre.totalseats }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">🏛️</div>
+        <h3>No Theatres Yet</h3>
+        <p>Add your first theatre to get started</p>
+        <a href="{{ url_for('add_theatre') }}" class="btn btn-primary mt-20">+ Add Theatre</a>
+    </div>
+    {% endif %}
+</div>
+
+<p class="text-center mt-20">
+    <a href="{{ url_for('admin_dashboard') }}" class="link">← Back to Dashboard</a>
+</p>
+{% endblock %}

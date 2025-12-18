@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Movies - BookMyShow Admin{% endblock %}
+
+{% block content %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+    }
+
+    .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .movie-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+        border-color: #e94560;
+    }
+
+    .movie-card h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .movie-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .movie-tag {
+        background: rgba(233, 69, 96, 0.2);
+        color: #e94560;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .movie-description {
+        color: #888;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .empty-state .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="page-header">
+    <h1>🎬 Manage Movies</h1>
+    <a href="{{ url_for('add_movie') }}" class="btn btn-primary">+ Add Movie</a>
+</div>
+
+{% if movies %}
+<div class="movies-grid">
+    {% for movie in movies %}
+    <div class="movie-card">
+        <h3>{{ movie.name }}</h3>
+        <div class="movie-info">
+            <span class="movie-tag">{{ movie.genre }}</span>
+            <span class="movie-tag">{{ movie.language }}</span>
+            <span class="movie-tag">{{ movie.duration }} min</span>
+        </div>
+        {% if movie.description %}
+        <p class="movie-description">{{ movie.description }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="icon">🎬</div>
+    <h3>No Movies Yet</h3>
+    <p>Add your first movie to get started</p>
+    <a href="{{ url_for('add_movie') }}" class="btn btn-primary mt-20">+ Add Movie</a>
+</div>
+{% endif %}
+
+<p class="text-center mt-20">
+    <a href="{{ url_for('admin_dashboard') }}" class="link">← Back to Dashboard</a>
+</p>
+{% endblock %}

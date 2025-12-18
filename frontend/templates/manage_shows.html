@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Shows - BookMyShow Admin{% endblock %}
+
+{% block content %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+    }
+
+    .table-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 15px 20px;
+        text-align: left;
+    }
+
+    th {
+        background: rgba(233, 69, 96, 0.2);
+        color: #e94560;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    tr:not(:last-child) td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .price-tag {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+
+    .empty-state .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="page-header">
+    <h1>🎞️ Manage Shows</h1>
+    <a href="{{ url_for('add_show') }}" class="btn btn-primary">+ Add Show</a>
+</div>
+
+<div class="table-container">
+    {% if shows %}
+    <table>
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Theatre</th>
+                <th>Show Time</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for show in shows %}
+            <tr>
+                <td>{{ show.movieId }}</td>
+                <td>{{ show.theatreId }}</td>
+                <td>{{ show.showtime }}</td>
+                <td><span class="price-tag">₹{{ show.price }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">🎞️</div>
+        <h3>No Shows Scheduled</h3>
+        <p>Schedule your first show to get started</p>
+        <a href="{{ url_for('add_show') }}" class="btn btn-primary mt-20">+ Add Show</a>
+    </div>
+    {% endif %}
+</div>
+
+<p class="text-center mt-20">
+    <a href="{{ url_for('admin_dashboard') }}" class="link">← Back to Dashboard</a>
+</p>
+{% endblock %}
