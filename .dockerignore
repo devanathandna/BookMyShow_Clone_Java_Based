@@ -1,0 +1,6 @@
+*.class
+target/
+.idea/
+*.iml
+Book_My_Show.zip
+__pycache__/
