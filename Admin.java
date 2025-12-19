@@ -61,7 +61,7 @@ public class Admin {
 
 
     Theatre addTheatre(int theatreid, String location, String theatrename, int totalseats) {
-        Theatre theatre = new Theatre(theatreid, location, theatrename, totalseats);
+        Theatre theatre = new Theatre(theatreid, location, theatrename, totalseats, 10); // Default tax of 10 added
         theatres.add(theatre);
         System.out.println("Theatre '" + theatrename + "' added successfully at " + location);
         return theatre;
