@@ -10,16 +10,15 @@ COPY lib/ ./lib/
 # Copy all Java source files
 COPY *.java ./
 
-# Create package directory and move files
+# Create the package directory structure and move the files into it
 RUN mkdir -p com/bookmyshow
 RUN mv *.java com/bookmyshow/
 
-# Compile all Java files with lib dependencies
+# Compile all Java files, placing the output in the 'out' directory
 RUN javac -cp "lib/*" -d out com/bookmyshow/*.java
 
-# Expose port
+# Expose the port your server runs on
 EXPOSE 8000
 
-# Run the backend server
+# Run the backend server using its fully qualified name
 CMD ["java", "-cp", "out:lib/*", "com.bookmyshow.BackendServer"]
-
