@@ -77,10 +77,7 @@ public class Admin {
     }
 
     Show addShowToTheatre(Theatre theatre, int showid, String showname, int showprice) {
-        Show show = new Show();
-        show.showid = showid;
-        show.showname = showname;
-        show.showprice = showprice;
+        Show show = new Show(showid, showname, showprice);
         
         if (theatre.shows == null) {
             theatre.shows = new ArrayList<>();
