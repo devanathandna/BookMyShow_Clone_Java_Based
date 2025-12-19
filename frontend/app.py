@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = 'bookmyshow_secret_key_2024'
 
 # Java Backend URL
-JAVA_BACKEND_URL = 'http://localhost:8000'
+JAVA_BACKEND_URL = 'https://bookmyshow-clone-java-based-1.onrender.com'
 
 def call_backend(endpoint, method='GET', data=None):
     """Helper function to call Java backend API"""
